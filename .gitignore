@@ -10,12 +10,13 @@ _yardoc
 coverage
 doc/
 lib/bundler/man
+lib/*.bundle
 pkg
 rdoc
 spec/reports
 test/tmp
 test/version_tmp
 tmp
-ext/rspice/Makefile
-ext/rspice/mkmf.log
-ext/rspice/rspice_wrapper.c
+ext/cspice_wrapper/Makefile
+ext/cspice_wrapper/mkmf.log
+ext/cspice_wrapper/cspice_wrapper.c

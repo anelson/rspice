@@ -1,4 +1,5 @@
 require 'rspec'
+
 require 'rspice'
 
 describe RSpice do

@@ -1,7 +1,7 @@
 /* This SWIG interface declaration file pulls in the CSPICE headers and function declarations,
 from which we will use ffi-swig-generator to generate pure Ruby bindings using the ffi library to
 call the native code. */
-%module rspice 
+%module cspice_wrapper 
 
 /* Import the typedefs used by CSPICE so SWIG will understand things like ConstSpiceChar* */
 %import "SpiceZdf.h"
