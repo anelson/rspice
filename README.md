@@ -1,6 +1,7 @@
-# Rspice
+# rspice
 
-TODO: Write a gem description
+rspice is a Ruby wrapper around CSPICE, NASA JPL's cross-platform library for various astronomical calculations, including ephemerides calculations based
+on the JPL's ephermeride files.
 
 ## Installation
 
