@@ -2,6 +2,7 @@
 from which we will use ffi-swig-generator to generate pure Ruby bindings using the ffi library to
 call the native code. */
 %module cspice 
+%import "SpiceZdf.h"
 %{
 require 'ffi'
 
@@ -997,8 +998,8 @@ Thus, you must be sure to remove the declaration of this function if you re-copy
    void              ftncls_c ( SpiceInt            unit );
    
 
-   void              furnsh_c ( ConstSpiceChar    * file );
-
+   /*void              furnsh_c ( ConstSpiceChar    * file );*/
+void              furnsh_c ( const char    * file );
 
    void              gcpool_c ( ConstSpiceChar    * name,
                                 SpiceInt            start,

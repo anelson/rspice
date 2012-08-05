@@ -19,7 +19,9 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+rspice is intended for use with the various JPL ephemerides.  The test folder contains a short-term DE405 planetary ephemeris file as well as supplementary files
+for defining the planetary constants like mass and ellipsoid, and reference frames for the moon and the earth.  These files are included in the distribution
+entirely for test purposes; rspice should be compatible with any JPL kernel which cspice itself works with.
 
 ## Contributing
 
