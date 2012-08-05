@@ -1,3 +1,3 @@
-module Rspice
+module RSpice
   VERSION = "0.0.1"
 end

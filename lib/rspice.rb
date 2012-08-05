@@ -1,6 +1,9 @@
 require "rspice/version"
 
-module Rspice
+# Require the extension library which wraps cspice
+require 'rspice.bundle'
+
+module RSpice
   # Furnishes (aka loads into memory) a SPICE kernel file.  Kernel files can be ASCII or binary format.  There are various
   # types of kernel files, containing various types of information.  The 'Intro to Kernels' [1] tutorial on the NAIF website
   # is key to understanding this concept.
@@ -12,5 +15,6 @@ module Rspice
   # 
   # 1. ftp://naif.jpl.nasa.gov/pub/naif/toolkit_docs/Tutorials/pdf/individual_docs/08_intro_to_kernels.pdf
   def furnish(kernel_file)
+    furnsh_c kernel_file
   end
 end

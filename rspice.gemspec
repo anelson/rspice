@@ -10,11 +10,13 @@ Gem::Specification.new do |gem|
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
+  gem.extensions    = ['ext/rspice/extconf.rb']
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = "rspice"
   gem.require_paths = ["lib"]
-  gem.version       = Rspice::VERSION
+  gem.version       = RSpice::VERSION
 
-  gem.add_dependency "ffi", "~> 1.0.11"
-  gem.add_dependency "ffi-swig-generator", "~> 0.3.2"
+  gem.add_dependency "rake-compiler", "~> 0.8.0"
+
+  gem.add_development_dependency "rspec", "~> 2.11.0"
 end

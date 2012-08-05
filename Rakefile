@@ -1,13 +1,8 @@
 #!/usr/bin/env rake
 require "bundler/gem_tasks"
+require 'rake/extensiontask'
 
-require 'ffi-swig-generator'
-
-# Create a rake task to generate the cspice ffi wrapper
-FFI::Generator::Task.new do |task|
-  task.input_fn = 'lib/rspice/*.i'
-  task.output_dir = 'lib/rspice/cspice_wrapper'
+Rake::ExtensionTask.new('rspice') do |ext|
+  ext.config_options << '--with-cspice-dir=/Users/anelson/sources/cspice'
 end
 
-# Make the wrapper generator task run as part of the build process
-task :build => [ "ffi:generate" ]
