@@ -9,7 +9,7 @@ module RSpice
   # Sometimes a metakernel is loaded, which is kind of like a C .h file that #include's other files.
   # 
   # 1. ftp://naif.jpl.nasa.gov/pub/naif/toolkit_docs/Tutorials/pdf/individual_docs/08_intro_to_kernels.pdf
-  def furnish(kernel_file)
+  def RSpice.furnish(kernel_file)
     Cspice_wrapper::furnsh_c kernel_file
   end
 end

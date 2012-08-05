@@ -991,7 +991,7 @@ call the native code. */
    void              ftncls_c ( SpiceInt            unit );
    
 
-   void              furnsh_c ( ConstSpiceChar    * file );
+   extern void              furnsh_c ( ConstSpiceChar    * file );
 
 
    void              gcpool_c ( ConstSpiceChar    * name,

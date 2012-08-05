@@ -11,3 +11,6 @@ Rake::ExtensionTask.new('rspice') do |ext|
   ext.config_options << '--with-cspice-dir=/Users/anelson/sources/cspice'
 end
 
+CLEAN.include('**/mkmf.log')
+CLEAN.include('**/Makefile')
+CLEAN.include('**/cspice_wrapper.c')
