@@ -20,8 +20,7 @@ module RSpice
         super
       end
 
-      if Cspice_wrapper.failed_c()
-
+      if Cspice_wrapper.failed_c
         #The CSPICE method just called reported an error.  Translate it into an RSpice exception
         short = get_error_message :short
         long = get_error_message :long

@@ -14,11 +14,13 @@ file itself since we need to customize the generated wrappers */
 #include "SpiceZfc.h"
 %}
 
-
 /****************************************************************************************************************
 * Custom macros to handle CSPICE's own strange ways of doing things                                             *
 ****************************************************************************************************************/
 
+/* Treat SpiceBoolean as ruby bools */
+%typemap(out) SpiceBoolean 
+ "$result = ($1 == SPICETRUE) ? Qtrue : Qfalse;";
 
 /*
  * %output_maxsize_sizefirst(SIZE, TYPEMAP)
