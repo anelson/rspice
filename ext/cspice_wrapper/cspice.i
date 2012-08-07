@@ -2,6 +2,41 @@
 from which we will use ffi-swig-generator to generate pure Ruby bindings using the ffi library to
 call the native code. */
 %module cspice_wrapper 
+%include "typemaps.i"
+%include "cstring.i"
+
+/* This is a copy-paste of cstring_output_maxsize from cstring.i, but with the size and string parameters reversed, as they are for some of the CSPICE functions */
+
+/** NB: For some reason SWIG does not expand this macro.  WHY!? */
+/*
+ * %cstring_output_maxsize_sizefirst(SIZE, TYPEMAP)
+ *
+ * This macro returns data in a string of some user-defined size.
+ *
+ *     %cstring_output_maxsize_sizefirst(int max, Char *outx) {
+ *     void foo(int max, Char *outx) {
+ *         sprintf(outx,"blah blah\n");
+ *     }
+ */
+
+%define cstring_output_maxsize_sizefirst(SIZE, TYPEMAP)                       
+%typemap(in,noblock=1,fragment=SWIG_AsVal_frag(size_t)) (SIZE, TYPEMAP) (int res, size_t size, Char *buff = 0) {   
+  res = SWIG_AsVal(size_t)($input, &size);
+  if (!SWIG_IsOK(res)) {
+    %argument_fail(res, "(SIZE, TYPEMAP)", $symname, $argnum);
+  }
+  buff= %new_array(size+1, Char);
+  $1 = %numeric_cast(size, $1_ltype);
+  $2 = %static_cast(buff, $2_ltype);
+}
+%typemap(freearg,noblock=1,match="in") (SIZE, TYPEMAP) {
+  if (buff$argnum) %delete_array(buff$argnum);
+} 
+%typemap(argout,noblock=1,fragment=#SWIG_FromCharPtr) (SIZE,TYPEMAP) { 
+  %append_output(SWIG_FromCharPtr($2));
+}
+%enddef
+
 
 /* Import the typedefs used by CSPICE so SWIG will understand things like ConstSpiceChar* */
 %import "SpiceZdf.h"
@@ -9,11 +44,35 @@ call the native code. */
 /* Import the SpiceCell typedef for the same reason */
 %import "SpiceCel.h"
 
+/* Typedefs from SpiceZfc.h.  For some reason if I import the whole SpiceZfc.h header then SWIG does not generate wrappers for the functions therein */
+typedef int       ftnlen;
+
 %{
 #include "SpiceUsr.h"
+#include "SpiceZfc.h"
 %}
 
-/* The following method declarations are copied from SpiceZpr.h in the CSPICE toolkit version N0064.  Updated toolkits will require this list be re-copied */
+/* The following are from SpiceZfc.h.  This is just a subset of the methods declared there, based on need */
+%cstring_output_maxsize(char *trace, ftnlen trace_len);
+int qcktrc_(char *trace, ftnlen trace_len);
+
+/* expln_ is a very awkward method, so we'll wrap it in one that's less awkward, and use a typemap 
+that tells SWIG expl is an ouptut string allocated to hold up to expl_len characters */
+int expln_(char *msg, char *expl, ftnlen msg_len, ftnlen expl_len);
+
+%cstring_output_maxsize(char *expl, ftnlen expl_len);
+
+%rename(expln_) expln_wrapper;
+
+%inline %{
+  int expln_wrapper(char* msg, char* expl, ftnlen expl_len) {
+    return expln_(msg, expl, (ftnlen)strlen(msg), expl_len);
+  }
+%}
+
+
+/* The following method declarations are copied from SpiceZpr.h in the CSPICE toolkit version N0064.  Updated toolkits will require this list be re-copied.
+In cases where the declarations required modification or SWIG decorations to work, a MOD tag is placed in a comment.  DO NOT BLINDLY COPY AND PASTE WITHOUT REVIEWING THESE MODS  */
   void              appndc_c ( ConstSpiceChar     * item,
                                 SpiceCell          * cell  );
 
@@ -991,7 +1050,7 @@ call the native code. */
    void              ftncls_c ( SpiceInt            unit );
    
 
-   extern void              furnsh_c ( ConstSpiceChar    * file );
+  void              furnsh_c ( ConstSpiceChar    * file );
 
 
    void              gcpool_c ( ConstSpiceChar    * name,
@@ -1048,9 +1107,24 @@ call the native code. */
                                 SpiceDouble         bounds [][3] ); 
 
 
-   void              getmsg_c ( ConstSpiceChar    * option,
-                                SpiceInt            lenout,
-                                SpiceChar         * msg     ); 
+/* MOD: getmsg_c cannot be used as-is; it requires some SWIG type mapping to ensure the output string is marshalled properly.  Just like expln_ above */
+/* Wrap the damnable getmsg_c in various ways since I can't figure out how to get SWIG to properly handle a const char input parameter and a string buffer/maxsize output */
+%cstring_output_maxsize(SpiceChar* msg, SpiceInt lenout);
+void getmsg_short(SpiceChar* msg, SpiceInt lenout);
+void getmsg_long(SpiceChar* msg, SpiceInt lenout);
+void getmsg_explain(SpiceChar* msg, SpiceInt lenout);
+
+%inline %{
+void getmsg_short(SpiceChar* msg, SpiceInt lenout) {
+  getmsg_c("SHORT", lenout, msg);
+}
+void getmsg_long(SpiceChar* msg, SpiceInt lenout) {
+  getmsg_c("LONG", lenout, msg);
+}
+void getmsg_explain(SpiceChar* msg, SpiceInt lenout) {
+  getmsg_c("EXPLAIN", lenout, msg);
+}
+%}
 
 
    SpiceBoolean      gfbail_c ( void );

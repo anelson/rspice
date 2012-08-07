@@ -10,6 +10,6 @@ module RSpice
   # 
   # 1. ftp://naif.jpl.nasa.gov/pub/naif/toolkit_docs/Tutorials/pdf/individual_docs/08_intro_to_kernels.pdf
   def RSpice.furnish(kernel_file)
-    Cspice_wrapper::furnsh_c kernel_file
+    CSpice.instance.furnsh_c kernel_file
   end
 end
