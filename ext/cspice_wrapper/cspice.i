@@ -1114,7 +1114,7 @@ void getmsg_short(SpiceChar* msg, SpiceInt lenout);
 void getmsg_long(SpiceChar* msg, SpiceInt lenout);
 void getmsg_explain(SpiceChar* msg, SpiceInt lenout);
 
-%inline %{
+%{
 void getmsg_short(SpiceChar* msg, SpiceInt lenout) {
   getmsg_c("SHORT", lenout, msg);
 }
