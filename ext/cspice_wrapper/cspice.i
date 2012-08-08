@@ -93,6 +93,8 @@ that tells SWIG expl is an ouptut string allocated to hold up to expl_len charac
 * If you need to add additional functions, copy their declarations from SpiceZfc.h and then think carefully     *
 * about which SWIG incantations will be required to make the generated wrapper work correctly                   *
 ****************************************************************************************************************/
+
+SpiceDouble dpr_c ( void );
                                  
 void              erract_c ( ConstSpiceChar    * operation,
                             SpiceInt            lenout,
@@ -190,3 +192,5 @@ void unload_c ( ConstSpiceChar  * file );
 %apply SpiceDouble *OUTPUT { SpiceDouble* et };
 void utc2et_c ( ConstSpiceChar  * utcstr,
                    SpiceDouble     * et      );
+
+SpiceDouble vsep_c ( ConstSpiceDouble v1[3], ConstSpiceDouble v2[3] );
