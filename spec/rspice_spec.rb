@@ -102,5 +102,24 @@ describe RSpice do
 
       utc_str.should == "2012-08-08T14:42:28.0000000000000"
     end
+
+    it "should produce known correct object state for a given ET" do
+      RSpice::furnish(File.join(test_data_dir, 'de405_1960_2020.bsp'))
+      RSpice::furnish(File.join(test_data_dir, 'earth_000101_121026_120804.bpc'))
+      RSpice::furnish(File.join(test_data_dir, 'moon_pa_de421_1900-2050.bpc'))
+      RSpice::furnish(File.join(test_data_dir, 'pck00010.tpc'))
+      RSpice::furnish(File.join(test_data_dir, 'naif0010.tls'))
+      et = RSpice::str_to_et("2012-08-08T14:42:28")
+
+      state, light_time = RSpice::compute_body_relative_state('MOON', et, 'ITRF93', :lts, 'EARTH')
+
+      state.position.x.should == -327807.8171300230314955115318298339843750000000000000000000000000000000
+      state.position.y.should == -208070.5176482859533280134201049804687500000000000000000000000000000000
+      state.position.z.should == 103915.6926515815721359103918075561523437500000000000000000000000000000
+      state.velocity.dx.should == -14.6354676574775854902554783620871603488922119140625000000000000000
+      state.velocity.dy.should == 23.1357059604107426764585397904738783836364746093750000000000000000
+      state.velocity.dz.should == 0.2594509178034260510337105642975075170397758483886718750000000000
+      light_time.should == 1.3407026808337947354488051132648251950740814208984375000000000000
+    end
   end
 end

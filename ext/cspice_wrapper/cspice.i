@@ -6,6 +6,7 @@
 %module cspice_wrapper 
 %include "typemaps.i"
 %include "cstring.i"
+%include "carrays.i"
 
 /* In the generated wrapper file, include the CSPICE headers.  We won't include most of them in the SWIG interface
 file itself since we need to customize the generated wrappers */
@@ -21,6 +22,9 @@ file itself since we need to customize the generated wrappers */
 /* Treat SpiceBoolean as ruby bools */
 %typemap(out) SpiceBoolean 
  "$result = ($1 == SPICETRUE) ? Qtrue : Qfalse;";
+
+/* Declare a wrapper class around an array of doubles since this is a common pattern with CSPICE */
+%array_class(SpiceDouble,SpiceDoubleArray);
 
 /*
  * %output_maxsize_sizefirst(SIZE, TYPEMAP)
@@ -164,7 +168,18 @@ output_maxsize_sizefirst(SpiceInt            lenout,
 void ktotal_c ( ConstSpiceChar   * kind,
                    SpiceInt         * count );
 
-void              reset_c  ( void );
+void              reset_c  ( void );   
+
+/* MOD: SWIG does not distinguish between arrays and pointers, so starg's declaration was changed from SpiceDouble starg[6] to SpiceDouble* starg
+and we'll use the SWIG type map to tell SWIG that this is a six-element array */
+%apply SpiceDouble *OUTPUT { SpiceDouble *lt };
+void spkezr_c ( ConstSpiceChar     *targ,
+                   SpiceDouble         et,
+                   ConstSpiceChar     *ref,
+                   ConstSpiceChar     *abcorr,
+                   ConstSpiceChar     *obs,
+                   SpiceDouble        starg[6],
+                   SpiceDouble        *lt);
 
 %apply SpiceDouble *OUTPUT { SpiceDouble* et };
 void str2et_c ( ConstSpiceChar * str,
@@ -175,4 +190,3 @@ void unload_c ( ConstSpiceChar  * file );
 %apply SpiceDouble *OUTPUT { SpiceDouble* et };
 void utc2et_c ( ConstSpiceChar  * utcstr,
                    SpiceDouble     * et      );
-                   
