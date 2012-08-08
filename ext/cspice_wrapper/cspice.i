@@ -98,6 +98,14 @@ void              erract_c ( ConstSpiceChar    * operation,
 void              errprt_c ( ConstSpiceChar    * operation,
                             SpiceInt            lenout,
                             SpiceChar         * list     );
+
+output_maxsize_sizefirst(SpiceInt            lenout,
+                         SpiceChar         * utcstr);
+void et2utc_c (  SpiceDouble       et,
+                    ConstSpiceChar  * format,
+                    SpiceInt          prec,
+                    SpiceInt          lenout,
+                    SpiceChar       * utcstr   );
    
 SpiceBoolean      failed_c ( void );
 
@@ -158,5 +166,13 @@ void ktotal_c ( ConstSpiceChar   * kind,
 
 void              reset_c  ( void );
 
+%apply SpiceDouble *OUTPUT { SpiceDouble* et };
+void str2et_c ( ConstSpiceChar * str,
+                   SpiceDouble    * et   );
+
 void unload_c ( ConstSpiceChar  * file );
 
+%apply SpiceDouble *OUTPUT { SpiceDouble* et };
+void utc2et_c ( ConstSpiceChar  * utcstr,
+                   SpiceDouble     * et      );
+                   

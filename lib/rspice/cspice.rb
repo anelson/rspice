@@ -37,7 +37,7 @@ module RSpice
     end
 
     private
-      MAX_MESSAGE_LENGTH = 8192
+      MAX_MESSAGE_LENGTH = 4095
 
       #Internal method intended to be called on module initialization.  Initializes the CSPICE error handling system
       #so we can translate CSPICE errors into Ruby exceptions
