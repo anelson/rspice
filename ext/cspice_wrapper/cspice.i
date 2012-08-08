@@ -71,7 +71,7 @@ int qcktrc_(char *trace, ftnlen trace_len);
 
 /* expln_ is a very awkward method, so we'll wrap it in one that's less awkward, and use a typemap 
 that tells SWIG expl is an ouptut string allocated to hold up to expl_len characters */
-int expln_(char *msg, char *expl, ftnlen msg_len, ftnlen expl_len);
+/*int expln_(char *msg, char *expl, ftnlen msg_len, ftnlen expl_len); */
 
 %cstring_output_maxsize(char *expl, ftnlen expl_len);
 
@@ -111,4 +111,52 @@ output_maxsize_sizefirst(SpiceInt            lenout,
                               SpiceInt            lenout,
                               SpiceChar         * msg     ); 
 
+/* The same trick used with expln_ must be used here to reorder kdata_c parameters so we can use them with the SWIG macros related to output buffers */
+/*void kdata_c ( SpiceInt          which,
+                  ConstSpiceChar  * kind,
+                  SpiceInt          fillen,
+                  SpiceInt          typlen,
+                  SpiceInt          srclen,
+                  SpiceChar       * file,
+                  SpiceChar       * filtyp,
+                  SpiceChar       * source,
+                  SpiceInt        * handle,
+                  SpiceBoolean    * found  );*/
+
+%cstring_output_maxsize(SpiceChar *file, SpiceInt fillen);
+%cstring_output_maxsize(SpiceChar *filtyp, SpiceInt typlen);
+%cstring_output_maxsize(SpiceChar *source, SpiceInt srclen);
+%apply SpiceInt *OUTPUT { SpiceInt* handle };
+%apply SpiceBoolean *OUTPUT { SpiceBoolean* found };
+
+%rename(kdata_c) kdata_c_wrapper;
+
+%inline %{
+  void kdata_c_wrapper(SpiceInt which, 
+        ConstSpiceChar* kind, 
+        SpiceChar* file, SpiceInt fillen,
+        SpiceChar* filtyp, SpiceInt typlen,
+        SpiceChar* source, SpiceInt srclen,
+        SpiceInt* handle,
+        SpiceBoolean* found) {
+    kdata_c(which,
+        kind,
+        fillen,
+        typlen,
+        srclen,
+        file,
+        filtyp,
+        source,
+        handle,
+        found);
+  }
+%}
+
+%apply SpiceInt *OUTPUT { SpiceInt* count };
+void ktotal_c ( ConstSpiceChar   * kind,
+                   SpiceInt         * count );
+
 void              reset_c  ( void );
+
+void unload_c ( ConstSpiceChar  * file );
+

@@ -15,7 +15,7 @@ module RSpice
     # CSPICE errors are translated into Ruby exceptions
     def method_missing(sym, *args, &block)
       begin
-        Cspice_wrapper.send sym, *args, &block
+        retval = Cspice_wrapper.send sym, *args, &block
       rescue NoMethodError
         super
       end
@@ -32,6 +32,8 @@ module RSpice
 
         raise CSpiceError.new(short, long, traceback, explain)
       end
+
+      retval
     end
 
     private
@@ -65,7 +67,7 @@ module RSpice
           message = Cspice_wrapper.getmsg_c 'explain', MAX_MESSAGE_LENGTH
 
         else
-          raise "Invalid kind #{kind}"
+          raise ArgumentError, "Invalid kind #{kind}"
         end
 
         message
