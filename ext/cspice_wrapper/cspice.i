@@ -63,6 +63,58 @@ file itself since we need to customize the generated wrappers */
 %import "SpiceCel.h"
 
 /****************************************************************************************************************
+* The following are hacks to suppose CSPICE CELL structures within Ruby.  The sadistic asshat who devised these *
+* fixed-size stack-stored types has given me serious heartburn on this one.  Cells can only be created using    *
+* a bunch of macros, and are stored on the stack but with some pointer trickery thrown in.  As you might imagine*
+* adapting such a monstrosity to a dynamic language with a mark and sweep garbage collector is, to put it mildly*
+* a fucking pain in the ass.                                                                                    *
+****************************************************************************************************************/
+%inline %{
+
+#define MAX_CELL_SIZE 1024
+const SpiceInt MaxCellSize = MAX_CELL_SIZE;
+
+/* Creates a new CSPICE double cell of the fixed size MAX_CELL_SIZE, and yields a pointer to it.
+To put things into or take things out of this cell, you must use the other helper functions below. */
+void with_spice_double_cell() {
+  SPICEDOUBLE_CELL(pita, MAX_CELL_SIZE);
+
+  //Yield this cell wrapped up in a SWIG blanket so Ruby code can pass it around.
+  rb_yield(SWIG_NewPointerObj(SWIG_as_voidptr(&pita), SWIGTYPE_p__SpiceCell, 0 |  0 ));
+} 
+
+/* Gets an element in a CSPICE double cell */
+double get_spice_double_cell_element(ConstSpiceCell* cell, SpiceInt index) {
+  double item;
+  SPICE_CELL_GET_D(cell, index, &item);
+  return item;
+}
+
+/* Sets an element in a CSPICE double cell */
+void set_spice_double_cell_element(SpiceCell* cell, SpiceInt index, double item) {
+  SPICE_CELL_SET_D(item, index, cell);
+}
+
+/* Gets a range of values in a CSPICE double cell, into a SpiceDoubleArray.  Careful, no bounds checking on that array */
+void get_spice_double_cell_elements(ConstSpiceCell* cell, SpiceInt index, SpiceInt length, SpiceDouble* array) {
+  SpiceInt idx;
+
+  for (idx = 0; idx < length; idx++) {
+    SPICE_CELL_GET_D(cell, index + idx, &array[idx]);
+  }
+}
+
+/* Sets a range of values in a CSPICE double cell copied from a SpiceDoubleArray */
+void set_spice_double_cell_elements(SpiceCell* cell, SpiceInt index, SpiceInt length, ConstSpiceDouble* array) {
+  SpiceInt idx;
+
+  for (idx = 0; idx < length; idx++) {
+    SPICE_CELL_SET_D(array[idx], index + idx, cell);
+  }
+}
+%}
+
+/****************************************************************************************************************
 * The following are from SpiceZfc.h.  This is just a subset of the methods declared there, based on need.       *
 * If you need to add additional functions, copy their declarations from SpiceZfc.h and then think carefully     *
 * about which SWIG incantations will be required to make the generated wrapper work correctly                   *

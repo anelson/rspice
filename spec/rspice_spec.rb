@@ -2,22 +2,16 @@ require 'rspec'
 
 require 'rspice'
 
+require 'helpers/kernel_loader'
+
 describe RSpice do
   let(:test_data_dir) {
-    File.join(File.dirname(__FILE__), 'test_data/')
+    get_test_data_dir()
   }
 
   after(:each) do 
     #Clear any kernels furnished during the run
     RSpice::unload_all_kernels
-  end
-
-  def load_all_ephemerides()
-    RSpice::furnish(File.join(test_data_dir, 'de405_1960_2020.bsp'))
-    RSpice::furnish(File.join(test_data_dir, 'earth_000101_121026_120804.bpc'))
-    RSpice::furnish(File.join(test_data_dir, 'moon_pa_de421_1900-2050.bpc'))
-    RSpice::furnish(File.join(test_data_dir, 'pck00010.tpc'))
-    RSpice::furnish(File.join(test_data_dir, 'naif0010.tls'))
   end
 
   describe "kernel functions" do
