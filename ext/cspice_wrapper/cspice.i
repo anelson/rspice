@@ -211,4 +211,6 @@ void unload_c ( ConstSpiceChar  * file );
 void utc2et_c ( ConstSpiceChar  * utcstr,
                    SpiceDouble     * et      );
 
+SpiceDouble vnorm_c ( ConstSpiceDouble v1[3] );
+
 SpiceDouble vsep_c ( ConstSpiceDouble v1[3], ConstSpiceDouble v2[3] );
