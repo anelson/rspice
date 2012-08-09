@@ -5,6 +5,7 @@ end
 require 'cspice_wrapper'
 
 require "rspice/version"
+require "rspice/spice_double_array"
 require "rspice/cspice"
 require "rspice/cspice_error"
 require "rspice/kernels"

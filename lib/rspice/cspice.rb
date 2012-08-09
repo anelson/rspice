@@ -38,6 +38,7 @@ module RSpice
 
     private
       MAX_MESSAGE_LENGTH = 4095
+      MAX_TRACEBACK_LENGTH = 255
 
       #Internal method intended to be called on module initialization.  Initializes the CSPICE error handling system
       #so we can translate CSPICE errors into Ruby exceptions
@@ -58,10 +59,9 @@ module RSpice
           message = Cspice_wrapper.getmsg_c 'long', MAX_MESSAGE_LENGTH
 
         when :traceback
-          result, message = Cspice_wrapper.qcktrc_ MAX_MESSAGE_LENGTH
-
-          #For some reason qcktrc_c doesn't null terminate
-          message.rstrip!
+          # For some reason the traceback sometimes has garbage in it.  It's only traceback never other strings so
+          # I don't think it's a marshalling bug.  Try to use a smaller buffer; I assume it's just a bug in CSPICE
+          result, message = Cspice_wrapper.qcktrc_ MAX_TRACEBACK_LENGTH
 
         when :explain
           message = Cspice_wrapper.getmsg_c 'explain', MAX_MESSAGE_LENGTH

@@ -94,6 +94,13 @@ that tells SWIG expl is an ouptut string allocated to hold up to expl_len charac
 * about which SWIG incantations will be required to make the generated wrapper work correctly                   *
 ****************************************************************************************************************/
 
+%apply SpiceInt *OUTPUT { SpiceInt* dim };
+void bodvrd_c ( ConstSpiceChar   * bodynm,
+               ConstSpiceChar   * item,
+               SpiceInt           maxn,
+               SpiceInt         * dim,
+               SpiceDouble      * values );
+
 SpiceDouble dpr_c ( void );
                                  
 void              erract_c ( ConstSpiceChar    * operation,
@@ -186,6 +193,17 @@ void spkezr_c ( ConstSpiceChar     *targ,
 %apply SpiceDouble *OUTPUT { SpiceDouble* et };
 void str2et_c ( ConstSpiceChar * str,
                    SpiceDouble    * et   );
+
+%apply SpiceDouble *OUTPUT { SpiceDouble* trgepc };
+void subpnt_c ( ConstSpiceChar       * method,
+                   ConstSpiceChar       * target,
+                   SpiceDouble            et,
+                   ConstSpiceChar       * fixref,
+                   ConstSpiceChar       * abcorr,
+                   ConstSpiceChar       * obsrvr,
+                   SpiceDouble            spoint [3],
+                   SpiceDouble          * trgepc,
+                   SpiceDouble            srfvec [3] );
 
 void unload_c ( ConstSpiceChar  * file );
 
