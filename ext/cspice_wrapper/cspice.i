@@ -153,6 +153,11 @@ void bodvrd_c ( ConstSpiceChar   * bodynm,
                SpiceInt         * dim,
                SpiceDouble      * values );
 
+SpiceInt card_c ( SpiceCell  * cell );
+
+ void copy_c (  SpiceCell   * cell,
+                  SpiceCell   * copy  );
+
 SpiceDouble dpr_c ( void );
                                  
 void              erract_c ( ConstSpiceChar    * operation,
@@ -231,6 +236,11 @@ void ktotal_c ( ConstSpiceChar   * kind,
 
 void              reset_c  ( void );   
 
+void scard_c (  SpiceInt      card,   
+                   SpiceCell   * cell  );
+
+SpiceInt size_c ( SpiceCell  * cell );
+
 /* MOD: SWIG does not distinguish between arrays and pointers, so starg's declaration was changed from SpiceDouble starg[6] to SpiceDouble* starg
 and we'll use the SWIG type map to tell SWIG that this is a six-element array */
 %apply SpiceDouble *OUTPUT { SpiceDouble *lt };
@@ -241,6 +251,9 @@ void spkezr_c ( ConstSpiceChar     *targ,
                    ConstSpiceChar     *obs,
                    SpiceDouble        starg[6],
                    SpiceDouble        *lt);
+
+void ssize_c (  SpiceInt      size,   
+                   SpiceCell   * cell  );
 
 %apply SpiceDouble *OUTPUT { SpiceDouble* et };
 void str2et_c ( ConstSpiceChar * str,
