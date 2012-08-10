@@ -70,6 +70,18 @@ describe RSpice do
       kernel_data[:source].should == ''
     end
 
+    it "should enumerate kernel data for all furnished kernels" do
+      test_data_file = File.join(test_data_dir, 'naif0010.tls')
+      RSpice::furnish(test_data_file)
+
+      count = 0
+      RSpice::each_kernel() do |k|
+        count.should == 0
+        count += 1
+        k[:file_name].should == test_data_file
+      end
+    end
+
     it "should unload a kernel that was previously loaded" do
       test_data_file = File.join(test_data_dir, 'naif0010.tls')
       RSpice::furnish(test_data_file)

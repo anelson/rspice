@@ -165,13 +165,13 @@ class SpiceIntCell : public SpiceCellBase {
     /* Gets an element in a CSPICE double cell */
     SpiceInt get_element(SpiceInt index) {
       SpiceInt item;
-      SPICE_CELL_GET_D(&_cell, index, &item);
+      SPICE_CELL_GET_I(&_cell, index, &item);
       return item;
     }
 
     /* Sets an element in a CSPICE double cell */
     void set_element(SpiceInt index, SpiceInt item) {
-      SPICE_CELL_SET_D(item, index, &_cell);
+      SPICE_CELL_SET_I(item, index, &_cell);
     }
 
     /* Gets a range of values in a CSPICE double cell, into a SpiceIntArray.  Careful, no bounds checking on that array */
@@ -179,7 +179,7 @@ class SpiceIntCell : public SpiceCellBase {
       SpiceInt idx;
 
       for (idx = 0; idx < length; idx++) {
-        SPICE_CELL_GET_D(&_cell, index + idx, &array[idx]);
+        SPICE_CELL_GET_I(&_cell, index + idx, &array[idx]);
       }
     }
 
@@ -188,7 +188,7 @@ class SpiceIntCell : public SpiceCellBase {
       SpiceInt idx;
 
       for (idx = 0; idx < length; idx++) {
-        SPICE_CELL_SET_D(array[idx], index + idx, &_cell);
+        SPICE_CELL_SET_I(array[idx], index + idx, &_cell);
       }
     }
 
@@ -235,6 +235,12 @@ void appndd_c ( SpiceDouble     item,
    
 void appndi_c ( SpiceInt        item,
                    SpiceCell     * cell );
+
+output_maxsize_sizefirst(SpiceInt            lenout,
+                         SpiceChar         * name);
+void bodc2s_c ( SpiceInt        code,
+                   SpiceInt        lenout,
+                   SpiceChar     * name );
 
 %apply SpiceInt *OUTPUT { SpiceInt* dim };
 void bodvrd_c ( ConstSpiceChar   * bodynm,
@@ -330,6 +336,9 @@ void scard_c (  SpiceInt      card,
                    SpiceCell   * cell  );
 
 SpiceInt size_c ( SpiceCell  * cell );
+
+void spkobj_c ( ConstSpiceChar  * spk,
+                   SpiceCell       * ids );
 
 /* MOD: SWIG does not distinguish between arrays and pointers, so starg's declaration was changed from SpiceDouble starg[6] to SpiceDouble* starg
 and we'll use the SWIG type map to tell SWIG that this is a six-element array */
