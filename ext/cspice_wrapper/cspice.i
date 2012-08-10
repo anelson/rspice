@@ -71,47 +71,131 @@ file itself since we need to customize the generated wrappers */
 ****************************************************************************************************************/
 %inline %{
 
-#define MAX_CELL_SIZE 1024
-const SpiceInt MaxCellSize = MAX_CELL_SIZE;
-
-/* Creates a new CSPICE double cell of the fixed size MAX_CELL_SIZE, and yields a pointer to it.
-To put things into or take things out of this cell, you must use the other helper functions below. */
-void with_spice_double_cell() {
-  SPICEDOUBLE_CELL(pita, MAX_CELL_SIZE);
-
-  //Yield this cell wrapped up in a SWIG blanket so Ruby code can pass it around.
-  rb_yield(SWIG_NewPointerObj(SWIG_as_voidptr(&pita), SWIGTYPE_p__SpiceCell, 0 |  0 ));
-} 
-
-/* Gets an element in a CSPICE double cell */
-double get_spice_double_cell_element(ConstSpiceCell* cell, SpiceInt index) {
-  double item;
-  SPICE_CELL_GET_D(cell, index, &item);
-  return item;
-}
-
-/* Sets an element in a CSPICE double cell */
-void set_spice_double_cell_element(SpiceCell* cell, SpiceInt index, double item) {
-  SPICE_CELL_SET_D(item, index, cell);
-}
-
-/* Gets a range of values in a CSPICE double cell, into a SpiceDoubleArray.  Careful, no bounds checking on that array */
-void get_spice_double_cell_elements(ConstSpiceCell* cell, SpiceInt index, SpiceInt length, SpiceDouble* array) {
-  SpiceInt idx;
-
-  for (idx = 0; idx < length; idx++) {
-    SPICE_CELL_GET_D(cell, index + idx, &array[idx]);
+class SpiceCellBase {
+public:
+  SpiceCell* cell_pointer() {
+    return &_cell;
   }
-}
 
-/* Sets a range of values in a CSPICE double cell copied from a SpiceDoubleArray */
-void set_spice_double_cell_elements(SpiceCell* cell, SpiceInt index, SpiceInt length, ConstSpiceDouble* array) {
-  SpiceInt idx;
+protected:
+  SpiceCellBase() {}
 
-  for (idx = 0; idx < length; idx++) {
-    SPICE_CELL_SET_D(array[idx], index + idx, cell);
-  }
-}
+  SpiceCell _cell;
+};
+
+class SpiceDoubleCell : public SpiceCellBase {
+  public:
+    SpiceDoubleCell(size_t size) {
+      _cell_data = new SpiceDouble[SPICE_CELL_CTRLSZ + size];
+
+      SpiceCell cell = { SPICE_DP,                                                
+        0,                                                                
+        static_cast<SpiceInt>(size),                                                             
+        0,                                                                
+        SPICETRUE,                                                        
+        SPICEFALSE,                                                       
+        SPICEFALSE,                                                       
+        (void *) _cell_data,                                    
+        (void *) &(_cell_data[SPICE_CELL_CTRLSZ])  };
+      _cell = cell;
+    }
+
+    ~SpiceDoubleCell() {
+      delete[] _cell_data;
+      _cell_data = NULL;
+    }
+
+    /* Gets an element in a CSPICE double cell */
+    SpiceDouble get_element(SpiceInt index) {
+      double item;
+      SPICE_CELL_GET_D(&_cell, index, &item);
+      return item;
+    }
+
+    /* Sets an element in a CSPICE double cell */
+    void set_element(SpiceInt index, double item) {
+      SPICE_CELL_SET_D(item, index, &_cell);
+    }
+
+    /* Gets a range of values in a CSPICE double cell, into a SpiceDoubleArray.  Careful, no bounds checking on that array */
+    void get_elements(SpiceInt index, SpiceInt length, SpiceDouble* array) {
+      SpiceInt idx;
+
+      for (idx = 0; idx < length; idx++) {
+        SPICE_CELL_GET_D(&_cell, index + idx, &array[idx]);
+      }
+    }
+
+    /* Sets a range of values in a CSPICE double cell copied from a SpiceDoubleArray */
+    void set_elements(SpiceInt index, SpiceInt length, ConstSpiceDouble* array) {
+      SpiceInt idx;
+
+      for (idx = 0; idx < length; idx++) {
+        SPICE_CELL_SET_D(array[idx], index + idx, &_cell);
+      }
+    }
+
+  private:
+    SpiceDouble* _cell_data;  
+};
+
+/** TODO: Use a SWIG macro so it's possible to declare int and double cells without all this code duplication */
+class SpiceIntCell : public SpiceCellBase {
+  public:
+    SpiceIntCell(size_t size) {
+      _cell_data = new SpiceInt[SPICE_CELL_CTRLSZ + size];
+
+      SpiceCell cell = { SPICE_INT,                                                
+        0,                                                                
+        static_cast<SpiceInt>(size),                                                             
+        0,                                                                
+        SPICETRUE,                                                        
+        SPICEFALSE,                                                       
+        SPICEFALSE,                                                       
+        (void *) _cell_data,                                    
+        (void *) &(_cell_data[SPICE_CELL_CTRLSZ])  };
+      _cell = cell;
+    }
+
+    ~SpiceIntCell() {
+      delete[] _cell_data;
+      _cell_data = NULL;
+    }
+
+    /* Gets an element in a CSPICE double cell */
+    SpiceInt get_element(SpiceInt index) {
+      SpiceInt item;
+      SPICE_CELL_GET_D(&_cell, index, &item);
+      return item;
+    }
+
+    /* Sets an element in a CSPICE double cell */
+    void set_element(SpiceInt index, SpiceInt item) {
+      SPICE_CELL_SET_D(item, index, &_cell);
+    }
+
+    /* Gets a range of values in a CSPICE double cell, into a SpiceIntArray.  Careful, no bounds checking on that array */
+    void get_elements(SpiceInt index, SpiceInt length, SpiceInt* array) {
+      SpiceInt idx;
+
+      for (idx = 0; idx < length; idx++) {
+        SPICE_CELL_GET_D(&_cell, index + idx, &array[idx]);
+      }
+    }
+
+    /* Sets a range of values in a CSPICE double cell copied from a SpiceIntArray */
+    void set_elements(SpiceInt index, SpiceInt length, ConstSpiceInt* array) {
+      SpiceInt idx;
+
+      for (idx = 0; idx < length; idx++) {
+        SPICE_CELL_SET_D(array[idx], index + idx, &_cell);
+      }
+    }
+
+  private:
+    SpiceInt* _cell_data;  
+};
+
 %}
 
 /****************************************************************************************************************
@@ -145,6 +229,12 @@ that tells SWIG expl is an ouptut string allocated to hold up to expl_len charac
 * If you need to add additional functions, copy their declarations from SpiceZfc.h and then think carefully     *
 * about which SWIG incantations will be required to make the generated wrapper work correctly                   *
 ****************************************************************************************************************/
+
+void appndd_c ( SpiceDouble     item,
+                   SpiceCell     * cell );
+   
+void appndi_c ( SpiceInt        item,
+                   SpiceCell     * cell );
 
 %apply SpiceInt *OUTPUT { SpiceInt* dim };
 void bodvrd_c ( ConstSpiceChar   * bodynm,

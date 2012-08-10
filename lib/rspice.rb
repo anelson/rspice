@@ -6,7 +6,7 @@ require 'cspice_wrapper'
 
 require "rspice/version"
 require "rspice/spice_vector"
-require "rspice/spice_double_cell"
+require "rspice/spice_cell"
 require "rspice/cspice"
 require "rspice/cspice_error"
 require "rspice/kernels"
