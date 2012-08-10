@@ -1,8 +1,9 @@
-module RSpice
-end
-
 # Require the extension library which wraps cspice
 require 'cspice_wrapper'
+
+module RSpice
+  DEGREES_PER_RADIAN = Cspice_wrapper::dpr_c()
+end
 
 require "rspice/version"
 require "rspice/spice_vector"
@@ -11,7 +12,6 @@ require "rspice/cspice"
 require "rspice/cspice_error"
 require "rspice/kernels"
 require "rspice/time"
-require "rspice/ephemeris"
 require "rspice/body_state"
 require "rspice/body"
 

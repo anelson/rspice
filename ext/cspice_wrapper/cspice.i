@@ -330,6 +330,25 @@ output_maxsize_sizefirst(SpiceInt            lenout,
 void ktotal_c ( ConstSpiceChar   * kind,
                    SpiceInt         * count );
 
+%apply SpiceDouble *OUTPUT { SpiceDouble* radius };
+%apply SpiceDouble *OUTPUT { SpiceDouble* longitude };
+%apply SpiceDouble *OUTPUT { SpiceDouble* latitude };
+void reclat_c ( ConstSpiceDouble    rectan[3],
+                   SpiceDouble       * radius,
+                   SpiceDouble       * longitude,
+                   SpiceDouble       * latitude  );
+
+%apply SpiceDouble *OUTPUT { SpiceDouble* lon };
+%apply SpiceDouble *OUTPUT { SpiceDouble* lat };
+%apply SpiceDouble *OUTPUT { SpiceDouble* alt };
+void recpgr_c ( ConstSpiceChar   * body,
+                   SpiceDouble        rectan[3],
+                   SpiceDouble        re,
+                   SpiceDouble        f,
+                   SpiceDouble      * lon,
+                   SpiceDouble      * lat,
+                   SpiceDouble      * alt       ); 
+
 void              reset_c  ( void );   
 
 void scard_c (  SpiceInt      card,   
