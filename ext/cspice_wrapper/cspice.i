@@ -254,6 +254,11 @@ SpiceInt card_c ( SpiceCell  * cell );
  void copy_c (  SpiceCell   * cell,
                   SpiceCell   * copy  );
 
+%apply SpiceDouble *OUTPUT { SpiceDouble* delta };
+void deltet_c ( SpiceDouble      epoch,
+                 ConstSpiceChar * eptype,
+                 SpiceDouble    * delta );
+
 SpiceDouble dpr_c ( void );
                                  
 void              erract_c ( ConstSpiceChar    * operation,
@@ -330,6 +335,10 @@ output_maxsize_sizefirst(SpiceInt            lenout,
 void ktotal_c ( ConstSpiceChar   * kind,
                    SpiceInt         * count );
 
+SpiceDouble lspcn_c ( ConstSpiceChar   * body,
+                         SpiceDouble        et,
+                         ConstSpiceChar   * abcorr );
+
 %apply SpiceDouble *OUTPUT { SpiceDouble* radius };
 %apply SpiceDouble *OUTPUT { SpiceDouble* longitude };
 %apply SpiceDouble *OUTPUT { SpiceDouble* latitude };
@@ -387,6 +396,10 @@ void subpnt_c ( ConstSpiceChar       * method,
                    SpiceDouble            spoint [3],
                    SpiceDouble          * trgepc,
                    SpiceDouble            srfvec [3] );
+
+SpiceDouble unitim_c ( SpiceDouble        epoch,
+                          ConstSpiceChar   * insys,
+                          ConstSpiceChar   * outsys );
 
 void unload_c ( ConstSpiceChar  * file );
 
