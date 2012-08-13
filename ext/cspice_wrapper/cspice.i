@@ -339,6 +339,31 @@ SpiceDouble lspcn_c ( ConstSpiceChar   * body,
                          SpiceDouble        et,
                          ConstSpiceChar   * abcorr );
 
+/* MOD: matrices are represented as one-dimensional arrays for ease of interoperability */
+%rename(mxv_c) mxv_c_wrapper;
+%inline %{
+void mxv_c_wrapper (  ConstSpiceDouble    m1 [9],
+              ConstSpiceDouble    vin [3],
+              SpiceDouble         vout[3]    ) {
+  mxv_c(m1, vin, vout);
+}
+%}
+
+
+/* MOD: matrices are represented as one-dimensional arrays for ease of interoperability */
+%rename(pxform_c) pxform_c_wrapper;
+%inline %{
+void pxform_c_wrapper ( ConstSpiceChar   * from,
+                   ConstSpiceChar   * to,
+                   SpiceDouble        et,
+                   SpiceDouble        rotate[9]) {
+  pxform_c(from,
+    to,
+    et,
+    reinterpret_cast<SpiceDouble(*)[3]>(rotate));
+}
+%}
+
 %apply SpiceDouble *OUTPUT { SpiceDouble* radius };
 %apply SpiceDouble *OUTPUT { SpiceDouble* longitude };
 %apply SpiceDouble *OUTPUT { SpiceDouble* latitude };
@@ -368,8 +393,6 @@ SpiceInt size_c ( SpiceCell  * cell );
 void spkobj_c ( ConstSpiceChar  * spk,
                    SpiceCell       * ids );
 
-/* MOD: SWIG does not distinguish between arrays and pointers, so starg's declaration was changed from SpiceDouble starg[6] to SpiceDouble* starg
-and we'll use the SWIG type map to tell SWIG that this is a six-element array */
 %apply SpiceDouble *OUTPUT { SpiceDouble *lt };
 void spkezr_c ( ConstSpiceChar     *targ,
                    SpiceDouble         et,
