@@ -205,6 +205,8 @@ class SpiceIntCell : public SpiceCellBase {
 ****************************************************************************************************************/
 
 typedef int       ftnlen;
+typedef double    doublereal;
+typedef int       integer;
 
 %cstring_output_maxsize(char *trace, ftnlen trace_len);
 int qcktrc_(char *trace, ftnlen trace_len);
@@ -220,6 +222,25 @@ that tells SWIG expl is an ouptut string allocated to hold up to expl_len charac
 %inline %{
   int expln_wrapper(char* msg, char* expl, ftnlen expl_len) {
     return expln_(msg, expl, (ftnlen)strlen(msg), expl_len);
+  }
+%}
+
+%apply doublereal *OUTPUT { SpiceDouble* delta };
+
+%rename(bodeul_) bodeul_wrapper;
+%apply doublereal *OUTPUT { doublereal* ra };
+%apply doublereal *OUTPUT { doublereal* dec };
+%apply doublereal *OUTPUT { doublereal* w };
+%apply doublereal *OUTPUT { doublereal* lambda };
+
+%inline %{
+  int bodeul_wrapper(integer body, doublereal et, doublereal *ra, doublereal *dec, doublereal *w, doublereal *lambda) {
+    return bodeul_(&body,
+    &et,
+    ra,
+    dec,
+    w,
+    lambda);
   }
 %}
 
@@ -349,6 +370,12 @@ void mxv_c_wrapper (  ConstSpiceDouble    m1 [9],
 }
 %}
 
+void mxvg_c ( const void   * m1,
+                 const void   * v2,
+                 SpiceInt       nrow1,
+                 SpiceInt       nc1r2,
+                 void         * vout   );
+
 
 /* MOD: matrices are represented as one-dimensional arrays for ease of interoperability */
 %rename(pxform_c) pxform_c_wrapper;
@@ -419,6 +446,21 @@ void subpnt_c ( ConstSpiceChar       * method,
                    SpiceDouble            spoint [3],
                    SpiceDouble          * trgepc,
                    SpiceDouble            srfvec [3] );
+
+
+/* MOD: matrices are represented as one-dimensional arrays for ease of interoperability */
+%rename(sxform_c) sxform_c_wrapper;
+%inline %{
+void sxform_c_wrapper ( ConstSpiceChar   * from,
+                   ConstSpiceChar   * to,
+                   SpiceDouble        et,
+                   SpiceDouble        rotate[36]) {
+  sxform_c(from,
+    to,
+    et,
+    reinterpret_cast<SpiceDouble(*)[6]>(rotate));
+}
+%}
 
 SpiceDouble unitim_c ( SpiceDouble        epoch,
                           ConstSpiceChar   * insys,
